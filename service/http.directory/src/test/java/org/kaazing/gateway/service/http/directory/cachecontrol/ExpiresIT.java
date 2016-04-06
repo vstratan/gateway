@@ -36,7 +36,7 @@ import org.kaazing.k3po.junit.rules.K3poRule;
  */
 public class ExpiresIT {
 
-    private final K3poRule k3po = new K3poRule().setScriptRoot("org/kaazing/specification/http/rfc7234/expires");
+    private final K3poRule k3po = new K3poRule().setScriptRoot("org/kaazing/gateway/service/http/directory/cachecontrol/rfc7234/expires");
 
     private final GatewayRule gateway = new GatewayRule() {
         {
@@ -51,6 +51,8 @@ public class ExpiresIT {
                             .nestedProperty("location")
                                 .property("patterns", "**/*")
                                 .property("cache-control", "max-age=100")
+//                                .property("Last-Modified", "Wed, 06 Apr 2016 10:27:38 GMT")
+//                                .property("Expires", "Wen, 6 Apr 2015 09:33:17 GMT")
                             .done()
                         .done()
                     .done();
