@@ -122,4 +122,16 @@ public class CacheControlInRequestIT {
         k3po.finish();
     }
 
+    @Test
+    @Specification({"no-transform/request"})
+    public void shouldReceiveUntransformedCachedResponse() throws Exception {
+        k3po.finish();
+    }
+
+    @Test
+    @Specification({"no-store.200/request"})
+    public void shouldReceiveOKWithNoStoreRequest() throws Exception {
+        k3po.finish();
+    }
+
 }
