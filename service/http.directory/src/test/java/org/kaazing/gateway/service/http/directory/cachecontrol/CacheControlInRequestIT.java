@@ -68,7 +68,7 @@ public class CacheControlInRequestIT {
 
     @Test
     @Specification({"max-age.stale.response.unconditional.request.200/request"})
-    public void shouldReceiveNotModifiedWhenCachedResponseIsStaleForUnconditionalRequestWithMaxAge() throws Exception {
+    public void shouldReceiveOKWhenCachedResponseIsStaleForUnconditionalRequestWithMaxAge() throws Exception {
         k3po.finish();
     }
 
@@ -105,7 +105,7 @@ public class CacheControlInRequestIT {
 
     @Test
     @Specification({"min-fresh.stale.response.unconditional.request.200/request"})
-    public void shouldReceiveNotModifiedWithStaleCachedResponseWhenMinFreshExceedsLimitForUnconditionalRequest()
+    public void shouldReceiveOKWithStaleCachedResponseWhenMinFreshExceedsLimitForUnconditionalRequest()
             throws Exception {
         k3po.finish();
     }
