@@ -59,11 +59,6 @@ public class CacheControlInRequestIT {
     @Rule
     public final TestRule chain = outerRule(k3po).around(gateway);
 
-    @Test
-    @Specification({"max-age.fresh.response.from.cache/request"})
-    public void shouldReceiveCachedResponseWithMaxAgeWhenCachedResponseIsFresh() throws Exception {
-        k3po.finish();
-    }
 
     @Test
     @Specification({"max-age.stale.response.conditional.request.304/request"})
@@ -78,18 +73,6 @@ public class CacheControlInRequestIT {
     }
 
     @Test
-    @Specification({"max-stale.any.age.from.cache/request"})
-    public void shouldReceiveCachedResponseForMaxStaleWithNoValue() throws Exception {
-        k3po.finish();
-    }
-
-    @Test
-    @Specification({"max-stale.stale.response.from.cache/request"})
-    public void shouldReceiveCachedResponseForMaxStaleWithinLimit() throws Exception {
-        k3po.finish();
-    }
-
-    @Test
     @Specification({"max-stale.stale.response.conditional.request.304/request"})
     public void shouldReceiveNotModifiedWithStaleCachedResponseWhenMaxStaleExceedsLimitForConditionalRequest() throws Exception {
         k3po.finish();
@@ -98,12 +81,6 @@ public class CacheControlInRequestIT {
     @Test
     @Specification({"max-stale.stale.response.unconditional.request.200/request"})
     public void shouldReceiveOKWithStaleCachedResponseWhenMaxStaleExceedsLimitForUnconditionalRequest() throws Exception {
-        k3po.finish();
-    }
-
-    @Test
-    @Specification({"min-fresh.fresh.response.from.cache/request"})
-    public void shouldReceiveCachedResponseForMinFreshWithinLimit() throws Exception {
         k3po.finish();
     }
 
@@ -145,15 +122,4 @@ public class CacheControlInRequestIT {
         k3po.finish();
     }
 
-    @Test
-    @Specification({"no-transform/request"})
-    public void shouldReceiveUntransformedCachedResponse() throws Exception {
-        k3po.finish();
-    }
-
-    @Test
-    @Specification({"only-if-cached.from.cache/request"})
-    public void shouldReceiveCachedResponseWithOnlyIfCachedAndReachableCache() throws Exception {
-        k3po.finish();
-    }
 }
