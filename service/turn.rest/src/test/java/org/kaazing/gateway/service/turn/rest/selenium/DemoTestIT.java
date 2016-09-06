@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaazing.gateway.service.selenium;
+package org.kaazing.gateway.service.turn.rest.selenium;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.PageFactory;
 
+import java.net.MalformedURLException;
+
+import java.io.IOException;
+
 public class DemoTestIT {
 
     private DemoPage page;
     private DemoNavigationSteps demoNavigationSteps;
-    private final String URL = "https://gateway.kaazing.test:18000/";
+    private final String GW_URL = "https://gateway.kaazing.webrtc.demo:18000/";
 
     @Before
-    public void openTheBrowser() {
+    public void openTheBrowser() throws MalformedURLException {
 
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
@@ -41,14 +43,13 @@ public class DemoTestIT {
                 "--use-file-for-fake-audio-capture=D:\\PATH\\TO\\WAV\\xxx.wav",
                 "--use-fake-device-for-media-stream");
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-       // ChromeDriver driver = new ChromeDriver(capabilities);
 
         page = PageFactory.initElements(new ChromeDriver(capabilities), DemoPage.class);
-//        page = PageFactory.initElements(new FirefoxDriver(), DemoPage.class);
-        page.open(URL);
+        page.open(GW_URL);
 
         demoNavigationSteps = new DemoNavigationSteps(page.getDriver());
     }
+
 
     @After
     public void closeTheBrowser() {
@@ -56,15 +57,22 @@ public class DemoTestIT {
     }
 
     @Test
-    public void testWebRTC() throws Exception {
+    public void testWebRTC() throws InterruptedException, IOException {
         page.inputUsername("test1");
         page.clickOnSignIn();
-        demoNavigationSteps.openNewTab(URL, page);
+        demoNavigationSteps.openNewTab(GW_URL, page);
         page.inputUsername("test2");
         page.clickOnSignIn();
         page.inputUsernameToCall("test1");
         page.clickOnCallBtn();
-        //demoNavigationSteps.closeCurrentTab();
+
+        Assert.assertTrue(page.isLocalVideoStreaming());
+        Assert.assertTrue(page.isRemoteVideoStreaming());
+        demoNavigationSteps.switchTabPrevious();
+        Thread.sleep(1000);
+        Assert.assertTrue(page.isLocalVideoStreaming());
+        Assert.assertTrue(page.isRemoteVideoStreaming());
+
     }
 
 }

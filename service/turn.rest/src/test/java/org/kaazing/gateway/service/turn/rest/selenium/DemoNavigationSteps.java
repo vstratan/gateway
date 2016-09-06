@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaazing.gateway.service.selenium;;
+package org.kaazing.gateway.service.turn.rest.selenium;;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class DemoNavigationSteps {
 
@@ -38,7 +37,7 @@ public class DemoNavigationSteps {
         // TODO switch to iterator
         driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
         tabs = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(tabs.get(1));
+        driver.switchTo().window(tabs.get(currentTabIndex + 1));
         driver.navigate().to(address);
         parentTabIndex = currentTabIndex;
         currentTabIndex++;

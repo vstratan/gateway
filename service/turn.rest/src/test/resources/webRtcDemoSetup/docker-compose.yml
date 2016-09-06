@@ -1,0 +1,49 @@
+version: '2'
+services:
+
+  broker:
+    image: kaazing/3rd-party:activemq-5.10.0
+    command:  ["java", "-jar", "/opt/activemq/bin/activemq.jar", "start"]
+    ports:
+      - "61616:61616"
+
+  gateway:
+    build: gateway
+    hostname: "gateway.kaazing.webrtc.demo"
+    ports:
+      - "18000:18000"
+    links:
+    - "coturn:coturn.webrtc.demo"
+    - broker
+
+  coturn:
+    build: coturn
+    hostname: "coturn.webrtc.demo"
+    ports:
+      - "3478:3478"
+    command: ["turnserver", "-n", "-a", "-v", "-r", "demo", "-u", "kaztest:kazpass", "-E", "coturn"]
+
+# use 'standalone-chrome-debug' if you want to connect via VNC viewer to see what really is happening on the browser (psw: secret) / <port4VNC> -> 5900
+# standalone-chrome for normal use
+  node1:
+    image: selenium/standalone-chrome-debug
+    hostname: "selenium.node1.webrtc.demo"
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    expose:
+      - "4444"
+    links:
+    - "gateway:gateway.kaazing.webrtc.demo"
+    - "coturn:coturn.webrtc.demo"
+#    - "node2:selenium.node2.webrtc.demo"
+
+  node2:
+    image: selenium/standalone-chrome-debug
+    hostname: "selenium.node2.webrtc.demo"
+    ports:
+      - "4445:4444"
+      - "5901:5900"
+    links:
+    - "gateway:gateway.kaazing.webrtc.demo"
+    - "coturn:coturn.webrtc.demo"

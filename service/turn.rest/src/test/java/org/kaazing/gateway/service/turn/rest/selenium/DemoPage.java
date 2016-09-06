@@ -13,20 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaazing.gateway.service.selenium;;
+package org.kaazing.gateway.service.turn.rest.selenium;;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class DemoPage {
 
-    protected WebDriver driver;
+    private WebDriver driver;
+    private JavascriptExecutor js;
 
     @FindBy(id = "usernameInput")
     WebElement usernameInput;
+
+    @FindBy(id = "passwordInput")
+    WebElement passwordInput;
 
     @FindBy(id = "loginBtn")
     WebElement loginBtn;
@@ -40,6 +49,9 @@ public class DemoPage {
     @FindBy(id = "callToUsernameInput")
     WebElement hangUpBtn;
 
+    @FindBy(id = "localVideo")
+    WebElement localVideo;
+
     @FindBy(id = "remoteVideo")
     WebElement remoteVideo;
 
@@ -47,10 +59,13 @@ public class DemoPage {
     public DemoPage(WebDriver driver) {
         this.driver = driver;
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        js = (JavascriptExecutor) driver;
     }
+
     public void open(String url) {
         driver.get(url);
     }
+
     public void close() {
         driver.quit();
     }
@@ -59,6 +74,12 @@ public class DemoPage {
         usernameInput.clear();
         usernameInput.sendKeys(name);
     }
+
+    public void inputPassword(String pass) {
+        usernameInput.clear();
+        usernameInput.sendKeys(pass);
+    }
+
     public void clickOnSignIn() {
         loginBtn.click();
     }
@@ -70,6 +91,12 @@ public class DemoPage {
 
     public void clickOnCallBtn() {
         callBtn.click();
+        // wait for connection to establish after clicking on call
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnHangBtn() {
@@ -80,4 +107,18 @@ public class DemoPage {
         return driver;
     }
 
+    public boolean isRemoteVideoStreaming(){
+        return isVideoStreaming(remoteVideo);
+    }
+
+    public boolean isLocalVideoStreaming(){
+        return isVideoStreaming(localVideo);
+    }
+
+    private boolean isVideoStreaming(WebElement videoElement){
+        return ((Number)js.executeScript("return arguments[0].currentTime;", videoElement)).doubleValue() > 0  &&
+                ((ArrayList<Object>)js.executeScript("return arguments[0].played;", videoElement)).size() > 0;
+    }
+
 }
+
