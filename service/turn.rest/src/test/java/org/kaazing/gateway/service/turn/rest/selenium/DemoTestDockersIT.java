@@ -28,16 +28,19 @@ import java.net.URL;
 
 public class DemoTestDockersIT {
 
-    @ClassRule
-    public static DockerComposeRule docker = DockerComposeRule.builder()
-            .file("src/test/resources/webRtcDemoSetup/docker-compose.yml")
-            .build();
+//    @ClassRule
+//    public static DockerComposeRule docker = DockerComposeRule.builder()
+//            .file("src/test/resources/webRtcDemoSetup/docker-compose.yml")
+//            .build();
 
     private DemoPage node1DemoPage;
     private DemoPage node2DemoPage;
-    private final String node1Username = "test1";
-    private final String node2Username = "test2";
-    private final String GW_URL = "https://gateway.kaazing.webrtc.demo:18000/";
+    private final String node1Username = "alice";
+    private final String node2Username = "bob";
+    private final String GW_URL = "https://gateway.kaazing.test:18000/";
+    private final String AUTH_URL = "https:///joe:welcome@auth.kaazing.test:18032/turn.rest?service=turn";
+    private final String DOCKER_HOST_IP = "192.168.99.100";
+
 
     @Before
     public void openTheBrowser() throws MalformedURLException {
@@ -51,8 +54,8 @@ public class DemoTestDockersIT {
                 "--use-file-for-fake-audio-capture=D:\\PATH\\TO\\WAV\\xxx.wav",
                 "--use-fake-device-for-media-stream");
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-        node1DemoPage = PageFactory.initElements(new RemoteWebDriver(new URL("http://192.168.99.100:4444/wd/hub"), capabilities), DemoPage.class);
-        node2DemoPage = PageFactory.initElements(new RemoteWebDriver(new URL("http://192.168.99.100:4445/wd/hub"), capabilities), DemoPage.class);
+        node1DemoPage = PageFactory.initElements(new RemoteWebDriver(new URL("http://" + DOCKER_HOST_IP + ":4444/wd/hub"), capabilities), DemoPage.class);
+        node2DemoPage = PageFactory.initElements(new RemoteWebDriver(new URL("http://" + DOCKER_HOST_IP + ":4445/wd/hub"), capabilities), DemoPage.class);
     }
 
 
@@ -65,16 +68,25 @@ public class DemoTestDockersIT {
     @Test
     public void testWebRTC() throws InterruptedException, IOException {
 
+        node1DemoPage.open(AUTH_URL);
+        Thread.sleep(500);
         node1DemoPage.open(GW_URL);
-        node1DemoPage.inputUsername(node1Username);
+        node1DemoPage.inputUsername("alice");
+        node1DemoPage.inputPassword("alice");
+        Thread.sleep(500);
         node1DemoPage.clickOnSignIn();
 
+        node2DemoPage.open(AUTH_URL);
+        Thread.sleep(500);
         node2DemoPage.open(GW_URL);
-        node2DemoPage.inputUsername(node2Username);
+        node2DemoPage.inputUsername("bob");
+        node2DemoPage.inputPassword("bob");
+        Thread.sleep(500);
         node2DemoPage.clickOnSignIn();
+        Thread.sleep(500);
         node2DemoPage.inputUsernameToCall(node1Username);
-        node2DemoPage.clickOnCallBtn();
 
+        node2DemoPage.clickOnCallBtn();
         Assert.assertTrue(node1DemoPage.isLocalVideoStreaming());
         Assert.assertTrue(node1DemoPage.isRemoteVideoStreaming());
         Assert.assertTrue(node2DemoPage.isLocalVideoStreaming());

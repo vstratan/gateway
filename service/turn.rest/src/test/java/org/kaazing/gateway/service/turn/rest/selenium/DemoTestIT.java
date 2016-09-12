@@ -29,7 +29,9 @@ public class DemoTestIT {
 
     private DemoPage page;
     private DemoNavigationSteps demoNavigationSteps;
-    private final String GW_URL = "https://gateway.kaazing.webrtc.demo:18000/";
+
+    private final String AUTH_URL = "https:///joe:welcome@auth.kaazing.test:18032/turn.rest?service=turn";
+    private final String GW_URL = "https://gateway.kaazing.test:18000/";
 
     @Before
     public void openTheBrowser() throws MalformedURLException {
@@ -40,14 +42,13 @@ public class DemoTestIT {
         options.addArguments("--allow-file-access-from-files",
                 "--use-fake-ui-for-media-stream",
                 "--allow-file-access",
-                "--use-file-for-fake-audio-capture=D:\\PATH\\TO\\WAV\\xxx.wav",
+//                "--use-file-for-fake-audio-capture=D:\\PATH\\TO\\WAV\\xxx.wav",
+                "--use-file-for-fake-video-capture=D:\\LUXOFT\\KAAZING\\WorkInPprogress\\WebRTC\\old_town_cross_420_720p50.y4m",
                 "--use-fake-device-for-media-stream");
+
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
         page = PageFactory.initElements(new ChromeDriver(capabilities), DemoPage.class);
-        page.open(GW_URL);
-
-        demoNavigationSteps = new DemoNavigationSteps(page.getDriver());
     }
 
 
@@ -58,12 +59,22 @@ public class DemoTestIT {
 
     @Test
     public void testWebRTC() throws InterruptedException, IOException {
-        page.inputUsername("test1");
+
+        page.open(AUTH_URL);
+        Thread.sleep(500);
+        page.open(GW_URL);
+
+        demoNavigationSteps = new DemoNavigationSteps(page.getDriver());
+        page.inputUsername("alice");
+        page.inputPassword("alice");
+        Thread.sleep(500);
         page.clickOnSignIn();
         demoNavigationSteps.openNewTab(GW_URL, page);
-        page.inputUsername("test2");
+        page.inputUsername("bob");
+        page.inputPassword("bob");
         page.clickOnSignIn();
-        page.inputUsernameToCall("test1");
+        page.inputUsernameToCall("alice");
+
         page.clickOnCallBtn();
 
         Assert.assertTrue(page.isLocalVideoStreaming());
@@ -72,7 +83,6 @@ public class DemoTestIT {
         Thread.sleep(1000);
         Assert.assertTrue(page.isLocalVideoStreaming());
         Assert.assertTrue(page.isRemoteVideoStreaming());
-
     }
 
 }

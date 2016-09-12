@@ -76,8 +76,8 @@ public class DemoPage {
     }
 
     public void inputPassword(String pass) {
-        usernameInput.clear();
-        usernameInput.sendKeys(pass);
+        passwordInput.clear();
+        passwordInput.sendKeys(pass);
     }
 
     public void clickOnSignIn() {
