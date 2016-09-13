@@ -15,6 +15,7 @@
  */
 package org.kaazing.gateway.service.turn.rest.selenium;
 
+
 import com.palantir.docker.compose.DockerComposeRule;
 import org.junit.*;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -28,10 +29,10 @@ import java.net.URL;
 
 public class DemoTestDockersIT {
 
-//    @ClassRule
-//    public static DockerComposeRule docker = DockerComposeRule.builder()
-//            .file("src/test/resources/webRtcDemoSetup/docker-compose.yml")
-//            .build();
+    @ClassRule
+    public static DockerComposeRule docker = DockerComposeRule.builder()
+            .file("src/test/resources/webRtcDemoSetup/docker-compose.yml")
+            .build();
 
     private DemoPage node1DemoPage;
     private DemoPage node2DemoPage;
